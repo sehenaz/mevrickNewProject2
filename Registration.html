@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Online Registration Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        h2 {
+            color: #764ba2;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: 'Arial', sans-serif;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            background: #f8f9ff;
+            cursor: pointer;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: transform 0.2s;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .admin-section {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #ffd700;
+            margin-top: 30px;
+        }
+
+        .admin-section h2 {
+            color: #ff8c00;
+            border-bottom-color: #ffd700;
+        }
+
+        .note {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Employee Online Registration Form</h1>
+        
+        <div id="successMessage" class="success-message"></div>
+        <div id="errorMessage" class="error-message"></div>
+
+        <form id="registrationForm">
+            <!-- Personal Details -->
+            <h2>Personal Details</h2>
+            
+            <div class="form-group">
+                <label class="required">Employee Name</label>
+                <input type="text" id="employeeName" name="employeeName" required>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="required">Employee Email ID</label>
+                    <input type="email" id="employeeEmail" name="employeeEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="required">Phone Number</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9]{10}" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="required">Age</label>
+                    <input type="number" id="age" name="age" min="18" max="100" required>
+                </div>
+                <div class="form-group">
+                    <label class="required">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Alternative Phone</label>
+                <input type="tel" id="alternativePhone" name="alternativePhone" pattern="[0-9]{10}">
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="required">Marital Status</label>
+                    <select id="maritalStatus" name="maritalStatus" required>
+                        <option value="">Select</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Blood Group</label>
+                    <select id="bloodGroup" name="bloodGroup" required>
+                        <option value="">Select</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="required">Address</label>
+                <textarea id="address" name="address" required></textarea>
+            </div>
+
+            <!-- Nominee Details -->
+            <h2>Nominee Details</h2>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label class="required">Nominee Name</label>
+                    <input type="text" id="nomineeName" name="nomineeName" required>
+                </div>
+                <div class="form-group">
+                    <label class="required">Nominee Phone Number</label>
+                    <input type="tel" id="nomineePhone" name="nomineePhone" pattern="[0-9]{10}" required>
+                </div>
+            </div>
+
+            <!-- Bank Details -->
+            <h2>Bank Details</h2>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label class="required">Bank Name</label>
+                    <input type="text" id="bankName" name="bankName" required>
+                </div>
+                <div class="form-group">
+                    <label class="required">Branch Name</label>
+                    <input type="text" id="branchName" name="branchName" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label class="required">Account Number</label>
+                    <input type="text" id="accountNumber" name="accountNumber" required>
+                </div>
+                <div class="form-group">
+                    <label class="required">IFSC Code</label>
+                    <input type="text" id="ifscCode" name="ifscCode" pattern="[A-Z]{4}0[A-Z0-9]{6}" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Branch Code</label>
+                    <input type="text" id="branchCode" name="branchCode">
+                </div>
+                <div class="form-group">
+                    <label>UPI ID</label>
+                    <input type="text" id="upiId" name="upiId">
+                </div>
+            </div>
+
+            <!-- Job Details -->
+            <h2>Job Details</h2>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label class="required">Employee Type</label>
+                    <select id="employeeType" name="employeeType" required>
+                        <option value="">Select</option>
+                        <option value="Full Time">Full Time</option>
+                        <option value="Casual">Casual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Salary (₹)</label>
+                    <input type="number" id="salary" name="salary" min="0" step="1000" required>
+                </div>
+            </div>
+
+            <!-- Document Upload -->
+            <h2>Document Upload</h2>
+            
+            <div class="form-group">
+                <label class="required">CV / Resume</label>
+                <input type="file" id="cvResume" name="cvResume" accept=".pdf,.doc,.docx" required>
+                <div class="note">Accepted formats: PDF, DOC, DOCX</div>
+            </div>
+
+            <div class="form-group">
+                <label class="required">Aadhaar Card / PAN Card</label>
+                <input type="file" id="idProof" name="idProof" accept=".pdf,.jpg,.jpeg,.png" required>
+                <div class="note">Accepted formats: PDF, JPG, PNG</div>
+            </div>
+
+            <div class="form-group">
+                <label class="required">Bank Passbook (Front Page)</label>
+                <input type="file" id="bankPassbook" name="bankPassbook" accept=".pdf,.jpg,.jpeg,.png" required>
+                <div class="note">Accepted formats: PDF, JPG, PNG</div>
+            </div>
+
+            <div class="form-group">
+                <label class="required">Last Exam Marksheet</label>
+                <input type="file" id="marksheet" name="marksheet" accept=".pdf,.jpg,.jpeg,.png" required>
+                <div class="note">Accepted formats: PDF, JPG, PNG</div>
+            </div>
+
+            <!-- Admin Section -->
+            <!-- <div class="admin-section">
+                <h2>Admin Section – Offer Letter</h2>
+                
+                <div class="form-group">
+                    <label>Upload Offer Letter (PDF)</label>
+                    <input type="file" id="offerLetter" name="offerLetter" accept=".pdf">
+                    <div class="note">Only admin can upload and email offer letter</div>
+                </div>
+            </div> -->
+
+
+    <button type="submit">Generate Appointment Letter</button>
+</form>
+
+
+
+            <button type="submit">Submit Registration</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+
+            try {
+                // Collect form data
+                const formData = {
+                    // Personal Details
+                    'Employee Name': document.getElementById('employeeName').value,
+                    'Employee Email': document.getElementById('employeeEmail').value,
+                    'Phone Number': document.getElementById('phoneNumber').value,
+                    'Age': document.getElementById('age').value,
+                    'Date of Birth': document.getElementById('dob').value,
+                    'Alternative Phone': document.getElementById('alternativePhone').value || 'N/A',
+                    'Marital Status': document.getElementById('maritalStatus').value,
+                    'Blood Group': document.getElementById('bloodGroup').value,
+                    'Address': document.getElementById('address').value,
+                    
+                    // Nominee Details
+                    'Nominee Name': document.getElementById('nomineeName').value,
+                    'Nominee Phone': document.getElementById('nomineePhone').value,
+                    
+                    // Bank Details
+                    'Bank Name': document.getElementById('bankName').value,
+                    'Branch Name': document.getElementById('branchName').value,
+                    'Account Number': document.getElementById('accountNumber').value,
+                    'IFSC Code': document.getElementById('ifscCode').value,
+                    'Branch Code': document.getElementById('branchCode').value || 'N/A',
+                    'UPI ID': document.getElementById('upiId').value || 'N/A',
+                    
+                    // Job Details
+                    'Employee Type': document.getElementById('employeeType').value,
+                    'Salary (₹)': document.getElementById('salary').value,
+                    
+                    // Document Upload Status
+                    'CV/Resume': document.getElementById('cvResume').files[0]?.name || 'Not uploaded',
+                    'ID Proof': document.getElementById('idProof').files[0]?.name || 'Not uploaded',
+                    'Bank Passbook': document.getElementById('bankPassbook').files[0]?.name || 'Not uploaded',
+                    'Marksheet': document.getElementById('marksheet').files[0]?.name || 'Not uploaded',
+                    'Offer Letter': document.getElementById('offerLetter').files[0]?.name || 'Not uploaded',
+                    
+                    // Submission Details
+                    'Registration Date': new Date().toLocaleDateString('en-IN'),
+                    'Registration Time': new Date().toLocaleTimeString('en-IN')
+                };
+
+                // Load existing data or create new
+                let existingData = [];
+                const existingFile = localStorage.getItem('employeeRegistrations');
+                if (existingFile) {
+                    const workbook = XLSX.read(existingFile, { type: 'binary' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    existingData = XLSX.utils.sheet_to_json(firstSheet);
+                }
+
+                // Add new entry
+                existingData.push(formData);
+
+                // Create new workbook
+                const ws = XLSX.utils.json_to_sheet(existingData);
+                
+                // Set column widths for better readability
+                const colWidths = [
+                    { wch: 20 }, // Employee Name
+                    { wch: 25 }, // Email
+                    { wch: 15 }, // Phone
+                    { wch: 8 },  // Age
+                    { wch: 12 }, // DOB
+                    { wch: 15 }, // Alt Phone
+                    { wch: 12 }, // Marital Status
+                    { wch: 12 }, // Blood Group
+                    { wch: 30 }, // Address
+                    { wch: 20 }, // Nominee Name
+                    { wch: 15 }, // Nominee Phone
+                    { wch: 20 }, // Bank Name
+                    { wch: 20 }, // Branch Name
+                    { wch: 18 }, // Account Number
+                    { wch: 12 }, // IFSC Code
+                    { wch: 12 }, // Branch Code
+                    { wch: 20 }, // UPI ID
+                    { wch: 12 }, // Employee Type
+                    { wch: 12 }, // Salary
+                    { wch: 20 }, // CV/Resume
+                    { wch: 20 }, // ID Proof
+                    { wch: 20 }, // Bank Passbook
+                    { wch: 20 }, // Marksheet
+                    { wch: 20 }, // Offer Letter
+                    { wch: 15 }, // Registration Date
+                    { wch: 15 }  // Registration Time
+                ];
+                ws['!cols'] = colWidths;
+
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Employee Registrations');
+
+                // Save to file
+                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+                
+                // Store in localStorage for persistence
+                localStorage.setItem('employeeRegistrations', wbout);
+
+                // Download file
+                const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Employee_Registrations_${new Date().toISOString().split('T')[0]}.xlsx`;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                // Show success message
+                successMsg.textContent = `Registration successful! Data saved for ${formData['Employee Name']}. Excel file has been downloaded.`;
+                successMsg.style.display = 'block';
+
+                // Reset form
+                document.getElementById('registrationForm').reset();
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            } catch (error) {
+                errorMsg.textContent = 'Error saving registration: ' + error.message;
+                errorMsg.style.display = 'block';
+                console.error('Error:', error);
+            }
+        });
+
+        // Helper function to convert string to array buffer
+        function s2ab(s) {
+            const buf = new ArrayBuffer(s.length);
+            const view = new Uint8Array(buf);
+            for (let i = 0; i < s.length; i++) {
+                view[i] = s.charCodeAt(i) & 0xFF;
+            }
+            return buf;
+        }
+
+        // Auto-calculate age from DOB
+        document.getElementById('dob').addEventListener('change', function() {
+            const dob = new Date(this.value);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDiff = today.getMonth() - dob.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+            document.getElementById('age').value = age;
+        });
+
+
+        
+    </script>
+</body>
+</html>
