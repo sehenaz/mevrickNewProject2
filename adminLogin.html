@@ -19,6 +19,8 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+
+
             overflow-x: hidden;
         }
 
@@ -242,10 +244,13 @@
 
             <!-- Login Form -->
             <div class="login-card">
-                <form id="loginForm">
+                <!-- <form id="loginForm"> -->
+                    <form id="loginForm" action="adminControlPanel.html" method="GET">
 
                     <div class="form-group">
                         <label for="adminId">Admin ID</label>
+
+                        
                         <div class="input-wrapper">
                             <svg class="input-icon" viewBox="0 0 24 24">
                                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
@@ -339,6 +344,9 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
 } else {
     showMsg(msgErr, "❌ Invalid Admin ID or Password.");
 }
+
+
+
 });
 </script>
 

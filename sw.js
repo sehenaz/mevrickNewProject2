@@ -18,14 +18,14 @@ const PRECACHE_URLS = [
   "./icon-512.png",
 
   "./adminLogin.html",
-  "./AdminControlPanel.html",
+  "./adminControlPanel.html",
   "./mev.html",
-  "./EmployeeProfile.html",
-  "./AttendenceTracker.html",
+  "./employeeProfile.html",
+  "./attendenceTracker.html",
   "./resultList.html",
   "./logout.html",
-  "./Registrations.html",
-  "./Profile.html",
+  "./reg.html",
+  "./profile.html",
   "./mevten.html"
 ];
 
