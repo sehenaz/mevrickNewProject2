@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#3f51b5">
+    <title>MEVTENCIA - Attendance Tracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+            min-height: 100vh; overflow-x: hidden;
+        }
+        .navbar {
+            background-color: #3f51b5; padding: 14px 18px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.18); position: sticky; top: 0; z-index: 10;
+        }
+        .logo { color: white; font-size: 20px; font-weight: 800; }
+        .nav-links { list-style: none; display: flex; gap: 12px; }
+        .nav-links a {
+            color: white; text-decoration: none; font-size: 12px;
+            padding: 8px 10px; border-radius: 999px; background: rgba(255,255,255,0.08);
+        }
+        .container { max-width: 1200px; margin: 30px auto 40px; padding: 0 20px; }
+        .profile-section {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 30px;
+            display: flex; align-items: center; gap: 30px;
+        }
+        .profile-img {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: linear-gradient(135deg, #3f51b5, #2c3e9e);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 40px; font-weight: bold;
+            overflow: hidden; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .profile-img img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-info { flex: 1; }
+        .profile-info h2 { color: #3f51b5; margin-bottom: 4px; }
+        .profile-info p { color: #666; margin: 3px 0; display: flex; align-items: center; gap: 8px; }
+        .clock-section {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 30px; text-align: center;
+        }
+        .clock-section h3 { color: #3f51b5; margin-bottom: 20px; }
+        .time-display {
+            font-size: 40px; color: #3f51b5; font-weight: bold;
+            margin-bottom: 12px; font-family: 'Courier New', monospace;
+        }
+        .date-display { font-size: 16px; color: #666; margin-bottom: 18px; }
+        .clock-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            padding: 14px 30px; border: none; border-radius: 10px;
+            font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; min-width: 140px;
+        }
+        .btn-in  { background: linear-gradient(135deg, #4caf50, #45a049); color: white; }
+        .btn-out { background: linear-gradient(135deg, #f44336, #da190b); color: white; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(0,0,0,0.18); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .status-card {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 30px;
+        }
+        .status-card h3 { color: #3f51b5; margin-bottom: 20px; }
+        .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .status-item { background: #f5f7fa; padding: 20px; border-radius: 10px; text-align: center; }
+        .status-item label { display: block; color: #666; font-size: 14px; margin-bottom: 10px; }
+        .status-item .value { font-size: 22px; font-weight: bold; color: #3f51b5; }
+        .summary-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; margin-bottom: 30px;
+        }
+        .summary-card {
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center;
+        }
+        .summary-card .number { font-size: 32px; font-weight: bold; color: #3f51b5; margin-bottom: 8px; }
+        .summary-card .label  { color: #666; font-size: 13px; }
+        .attendance-table {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow-x: auto;
+        }
+        .attendance-table h3 { color: #3f51b5; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #3f51b5; color: white; padding: 12px 14px; text-align: left; font-weight: 600; font-size: 13px; }
+        td { padding: 12px 14px; border-bottom: 1px solid #e0e7ff; font-size: 13px; }
+        tr:hover { background: #f5f7fa; }
+        .status-present  { color: #4caf50; font-weight: 600; }
+        .status-halfday  { color: #ff9800; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none;">MEVTENCIA</a></div>
+    <ul class="nav-links">
+        <li><a href="mev.html">Camera Login</a></li>
+        <li><a href="Employeeprofile.html">Profile</a></li>
+        <li><a href="Attendencetracker.html">Attendance</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+    <div class="profile-section">
+        <div class="profile-img" id="profileImg">
+            <svg viewBox="0 0 24 24" fill="white" style="width:60px;height:60px;">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+        </div>
+        <div class="profile-info">
+            <h2 id="empName">Employee</h2>
+            <p id="empMeta" style="color:#6b7280;font-size:13px;"></p>
+            <p id="empLocation" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="#3f51b5" style="width:18px;height:18px;">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+                <span id="locationText">Location not available</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="clock-section">
+        <h3>Clock In / Clock Out</h3>
+        <div class="date-display" id="currentDate">Loading...</div>
+        <div class="time-display" id="currentTime">00:00:00</div>
+        <div class="clock-buttons">
+            <button class="btn btn-in"  id="clockInBtn"  onclick="clockIn()">Clock In</button>
+            <button class="btn btn-out" id="clockOutBtn" onclick="clockOut()" disabled>Clock Out</button>
+        </div>
+    </div>
+
+    <div class="status-card">
+        <h3>Today's Status</h3>
+        <div class="status-grid">
+            <div class="status-item"><label>Clock In Time</label><div class="value" id="todayClockIn">--:--</div></div>
+            <div class="status-item"><label>Clock Out Time</label><div class="value" id="todayClockOut">--:--</div></div>
+            <div class="status-item"><label>Work Hours</label><div class="value" id="todayHours">0h 0m</div></div>
+            <div class="status-item"><label>Status</label><div class="value" id="todayStatus">Not Clocked In</div></div>
+        </div>
+    </div>
+
+    <div class="summary-cards">
+        <div class="summary-card"><div class="number" id="totalDays">0</div><div class="label">Total Days</div></div>
+        <div class="summary-card"><div class="number" id="presentDays">0</div><div class="label">Full Days</div></div>
+        <div class="summary-card"><div class="number" id="halfDays">0</div><div class="label">Half Days</div></div>
+        <div class="summary-card"><div class="number" id="totalHours">0h</div><div class="label">Total Work Hours</div></div>
+    </div>
+
+    <div class="attendance-table">
+        <h3>Attendance History</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th><th>Clock In</th><th>Clock Out</th><th>Work Hours</th><th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="attendanceBody"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+    const LS = {
+        employeeDb: "mevtencia_employeeDatabase",
+        session:    "mevtencia_session",
+        attendance: "mevtencia_attendanceRecords"
+    };
+
+    function loadObj(key, fallback) {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        try { return JSON.parse(raw); } catch { return fallback; }
+    }
+
+    let currentEmployee = null;
+    let allAttendance   = loadObj(LS.attendance, {});
+    let attendanceData  = null;
+
+    // ✅ KOI REDIRECT NAHI — seedha UI
+    window.onload = function () {
+
+        const session = loadObj(LS.session, null);
+        const db      = loadObj(LS.employeeDb, {});
+        const emp     = (session && session.id) ? db[session.id] : null;
+
+        if (emp) {
+            // ✅ Employee mila
+            currentEmployee = { ...emp };
+            document.getElementById("empName").textContent = emp.name + "  (" + emp.id + ")";
+
+            const workMode = emp.workMode || "Work From Office";
+            const allowed  = workMode === "Work From Office" || emp.mailApproved === true;
+
+            document.getElementById("empMeta").textContent =
+                (emp.department || "Dept") + " • " + workMode +
+                (allowed ? " • ✅ Allowed" : " • ❌ Access Denied");
+
+            attendanceData = allAttendance[emp.id] || {
+                employee: { name: emp.name, photo: null, location: null },
+                currentSession: null,
+                records: []
+            };
+            allAttendance[emp.id] = attendanceData;
+
+            if (!allowed) {
+                document.getElementById('clockInBtn').disabled = true;
+                document.getElementById('clockOutBtn').disabled = true;
+                document.getElementById('todayStatus').textContent = 'Access Denied';
+                document.getElementById('todayStatus').style.color = '#f44336';
+            }
+
+            loadEmployeePhoto();
+
+        } else {
+            // ✅ Session nahi mila — Guest mode, phir bhi UI dikhao
+            currentEmployee = { id: "guest" };
+            document.getElementById("empName").textContent = "Guest";
+            document.getElementById("empMeta").textContent = "Please login from Profile page for full access";
+
+            attendanceData = allAttendance["guest"] || {
+                employee: { name: "Guest", photo: null, location: null },
+                currentSession: null,
+                records: []
+            };
+            allAttendance["guest"] = attendanceData;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+        loadTodayStatus();
+        updateAttendanceTable();
+        updateSummary();
+    };
+
+    function loadEmployeePhoto() {
+        const photo = localStorage.getItem("employeePhoto");
+        if (photo) {
+            const img = document.createElement("img");
+            img.src = photo;
+            const el = document.getElementById("profileImg");
+            el.innerHTML = '';
+            el.appendChild(img);
+        }
+        const loc = localStorage.getItem("employeeLocationDetails");
+        if (loc) {
+            try {
+                const d = JSON.parse(loc);
+                document.getElementById("locationText").textContent = d.address || `${d.lat.toFixed(4)}, ${d.lng.toFixed(4)}`;
+                document.getElementById("empLocation").style.display = 'flex';
+                attendanceData.employee.location = d.address;
+            } catch (e) {}
+        }
+    }
+
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('currentTime').textContent =
+            now.toLocaleTimeString('en-US', { hour12: true });
+        document.getElementById('currentDate').textContent =
+            now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function loadTodayStatus() {
+        const today  = new Date().toLocaleDateString('en-GB');
+        const record = attendanceData.records.find(r => r.date === today);
+        if (!record) return;
+
+        document.getElementById('todayClockIn').textContent = record.clockIn;
+        if (record.clockOut) {
+            document.getElementById('todayClockOut').textContent = record.clockOut;
+            document.getElementById('todayHours').textContent    = record.workHours;
+            const half = record.attendanceType === 'Half Day';
+            document.getElementById('todayStatus').textContent = half ? 'Half Day' : 'Completed';
+            document.getElementById('todayStatus').style.color = half ? '#ff9800' : '#3f51b5';
+            document.getElementById('clockInBtn').disabled  = true;
+            document.getElementById('clockOutBtn').disabled = true;
+        } else {
+            document.getElementById('todayStatus').textContent = 'Working';
+            document.getElementById('todayStatus').style.color = '#4caf50';
+            document.getElementById('clockInBtn').disabled  = true;
+            document.getElementById('clockOutBtn').disabled = false;
+            attendanceData.currentSession = record;
+            startWorkHourTimer();
+        }
+    }
+
+    function isHalfDay(ci, co) {
+        const a = new Date(ci), b = new Date(co);
+        return (a.getHours() > 11 || (a.getHours() === 11 && a.getMinutes() > 30)) ||
+               (b.getHours() < 16 || (b.getHours() === 16 && b.getMinutes() < 30));
+    }
+
+    function clockIn() {
+        if (!attendanceData) return;
+        const now = new Date();
+        const record = {
+            date:        now.toLocaleDateString('en-GB'),
+            clockIn:     now.toLocaleTimeString('en-US', { hour12: false }),
+            clockInFull: now.toISOString(),
+            location:    attendanceData.employee.location || 'Not available'
+        };
+        attendanceData.currentSession = record;
+        attendanceData.records.unshift(record);
+        saveAttendanceData();
+
+        document.getElementById('clockInBtn').disabled  = true;
+        document.getElementById('clockOutBtn').disabled = false;
+        document.getElementById('todayClockIn').textContent = record.clockIn;
+        document.getElementById('todayStatus').textContent  = 'Working';
+        document.getElementById('todayStatus').style.color  = '#4caf50';
+        startWorkHourTimer();
+        updateAttendanceTable();
+    }
+
+    function clockOut() {
+        if (!attendanceData?.currentSession) return;
+        const now = new Date();
+        const ci  = new Date(attendanceData.currentSession.clockInFull);
+
+        attendanceData.currentSession.clockOut     = now.toLocaleTimeString('en-US', { hour12: false });
+        attendanceData.currentSession.clockOutFull = now.toISOString();
+        attendanceData.currentSession.workHours    = calcHours(ci, now);
+        const half = isHalfDay(attendanceData.currentSession.clockInFull, attendanceData.currentSession.clockOutFull);
+        attendanceData.currentSession.attendanceType = half ? 'Half Day' : 'Full Day';
+
+        const today = new Date().toLocaleDateString('en-GB');
+        const idx   = attendanceData.records.findIndex(r => r.date === today);
+        if (idx !== -1) attendanceData.records[idx] = { ...attendanceData.currentSession };
+
+        saveAttendanceData();
+
+        document.getElementById('clockInBtn').disabled  = true;
+        document.getElementById('clockOutBtn').disabled = true;
+        document.getElementById('todayClockOut').textContent = attendanceData.currentSession.clockOut;
+        document.getElementById('todayHours').textContent   = attendanceData.currentSession.workHours;
+        document.getElementById('todayStatus').textContent  = half ? 'Half Day' : 'Completed';
+        document.getElementById('todayStatus').style.color  = half ? '#ff9800' : '#3f51b5';
+
+        attendanceData.currentSession = null;
+        updateAttendanceTable();
+        updateSummary();
+    }
+
+    function calcHours(s, e) {
+        const d = e - s;
+        return `${Math.floor(d/3600000)}h ${Math.floor((d%3600000)/60000)}m`;
+    }
+
+    function startWorkHourTimer() {
+        setInterval(() => {
+            if (attendanceData?.currentSession?.clockInFull)
+                document.getElementById('todayHours').textContent =
+                    calcHours(new Date(attendanceData.currentSession.clockInFull), new Date());
+        }, 60000);
+    }
+
+    function updateAttendanceTable() {
+        const tbody = document.getElementById('attendanceBody');
+        tbody.innerHTML = '';
+        attendanceData.records.forEach(r => {
+            const row = tbody.insertRow();
+            const cls = r.clockOut ? (r.attendanceType === 'Half Day' ? 'status-halfday' : 'status-present') : '';
+            const txt = r.clockOut ? (r.attendanceType === 'Half Day' ? 'Half Day' : 'Full Day') : 'In Progress';
+            row.innerHTML = `
+                <td>${r.date}</td>
+                <td>${r.clockIn}</td>
+                <td>${r.clockOut || '--:--'}</td>
+                <td>${r.workHours || 'In Progress'}</td>
+                <td class="${cls}">${txt}</td>`;
+        });
+    }
+
+    function updateSummary() {
+        const r = attendanceData.records;
+        document.getElementById('totalDays').textContent   = r.length;
+        document.getElementById('presentDays').textContent = r.filter(x => x.clockOut && x.attendanceType === 'Full Day').length;
+        document.getElementById('halfDays').textContent    = r.filter(x => x.clockOut && x.attendanceType === 'Half Day').length;
+        let mins = 0;
+        r.forEach(x => { const m = x.workHours?.match(/(\d+)h (\d+)m/); if (m) mins += +m[1]*60 + +m[2]; });
+        document.getElementById('totalHours').textContent = Math.floor(mins/60) + 'h';
+    }
+
+    function saveAttendanceData() {
+        if (!currentEmployee) return;
+        allAttendance[currentEmployee.id] = attendanceData;
+        localStorage.setItem(LS.attendance, JSON.stringify(allAttendance));
+    }
+</script>
+
+</body>
+</html>

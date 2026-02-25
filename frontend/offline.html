@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#3f51b5" />
+  <title>MEVTENCIA - Offline</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #111827;
+      overflow-x: hidden;
+    }
+    .card {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      padding: 26px;
+      text-align: center;
+    }
+    .icon {
+      width: 84px;
+      height: 84px;
+      border-radius: 18px;
+      margin: 0 auto 14px;
+      background: linear-gradient(135deg, #3f51b5, #2c3e9e);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 10px 25px rgba(63,81,181,.35);
+    }
+    .icon svg { width: 44px; height: 44px; fill: #fff; }
+    h1 { font-size: 24px; line-height: 1.2; margin-bottom: 8px; color: #111827; }
+    p { font-size: 14px; color: #4b5563; line-height: 1.6; }
+    .tips {
+      margin-top: 16px;
+      background: #f5f7fa;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+      text-align: left;
+    }
+    .tips h2 { font-size: 14px; margin-bottom: 8px; color: #3f51b5; }
+    .tips ul { padding-left: 18px; }
+    .tips li { margin: 6px 0; font-size: 13px; color: #374151; }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .btn {
+      min-height: 44px;
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 12px 14px;
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    }
+    .btn:active { transform: scale(.99); }
+    .btn-primary {
+      background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(63,81,181,.28);
+    }
+    .btn-ghost {
+      background: #fff;
+      color: #3f51b5;
+      border: 2px solid rgba(63,81,181,.25);
+    }
+    .small { margin-top: 10px; font-size: 12px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-live="polite">
+    <div class="icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 14h-2v-2h2v2zm0-4h-2V6h2v6z"/>
+      </svg>
+    </div>
+    <h1>You’re offline</h1>
+    <p>
+      MEVTENCIA is installed and can work offline, but this page hasn’t been cached yet.
+      Connect to the internet once, then reopen the app.
+    </p>
+
+    <section class="tips" aria-label="Offline tips">
+      <h2>What you can do now</h2>
+      <ul>
+        <li>Go back to the Home screen (cached) and use available features.</li>
+        <li>If camera/location won’t work: ensure you’re on HTTPS (required).</li>
+        <li>After you reconnect, refresh once to cache everything for offline use.</li>
+      </ul>
+    </section>
+
+    <div class="row">
+      <button class="btn btn-primary" onclick="location.href='index.html'">Go to Home</button>
+      <button class="btn btn-ghost" onclick="location.reload()">Try Again</button>
+    </div>
+
+    <div class="small">MEVTENCIA PWA • Offline fallback</div>
+  </main>
+</body>
+</html>
+
