@@ -16,18 +16,21 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // Register Employee
 app.post('/api/register', (req, res) => {
     const data = req.body;
+    console.log('--- Incoming Registration Data ---');
+    console.log(data);
+
     const query = `INSERT INTO employees (
-        id, name, email, phoneNumber, altPhone, age, password, department, workMode, 
+        id, name, email, phoneNumber, altPhone, age, dob, password, department, workMode, 
         salary, designation, joiningDate, workLocation, maritalStatus, bloodGroup, 
         address, nomineeName, nomineePhone, bankName, branchName, accountNumber, 
         ifscCode, upiId, employeeType, branchCode
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const empId = data.id || `MEV/${Math.floor(Math.random() * 899) + 100}/${new Date().getFullYear()}`;
 
     const params = [
-        empId, data.employeeName, data.employeeEmail, data.phoneNumber, data.alternativePhone,
-        data.age, '2026', data.department || 'IT', data.workMode || 'Work From Office',
+        empId, data.employeeName, data.employeeEmail, data.phoneNumber, data.alternativePhone || data.altPhone,
+        data.age, data.dob, '2026', data.department || 'IT', data.workMode || 'Work From Office',
         data.salary, data.designation, data.joiningDate, data.workLocation,
         data.maritalStatus, data.bloodGroup, data.address, data.nomineeName,
         data.nomineePhone, data.bankName, data.branchName, data.accountNumber,
@@ -36,8 +39,10 @@ app.post('/api/register', (req, res) => {
 
     db.run(query, params, function (err) {
         if (err) {
+            console.error('❌ Database Error during /api/register:', err.message);
             return res.status(500).json({ error: err.message });
         }
+        console.log('✅ Employee registered successfully:', empId);
         res.json({ message: 'Employee registered successfully', id: empId });
     });
 });
@@ -95,6 +100,7 @@ app.delete('/api/employees/:id', (req, res) => {
         res.json({ message: 'Employee deleted successfully' });
     });
 });
+
 
 // Attendance Endpoints
 app.post('/api/attendance', (req, res) => {

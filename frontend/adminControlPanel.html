@@ -273,114 +273,7 @@
       line-height: 1.5
     }
 
-    /* Attendance styles */
-    .attendance-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #fff;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
-      margin-bottom: 25px
-    }
 
-    .attendance-card h2 {
-      color: #fff;
-      border-bottom: 2px solid rgba(255, 255, 255, .3);
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-    }
-
-    .camera-section {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .video-container {
-      position: relative;
-      width: 100%;
-      max-width: 500px;
-      background: #000;
-      border-radius: 15px;
-      overflow: hidden;
-    }
-
-    #video {
-      width: 100%;
-      display: block;
-    }
-
-    #canvas {
-      display: none;
-    }
-
-    .capture-preview {
-      max-width: 200px;
-      border-radius: 10px;
-      border: 3px solid #fff;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
-    }
-
-    .attendance-log {
-      background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      color: #374151;
-      margin-top: 20px;
-    }
-
-    .attendance-item {
-      display: flex;
-      gap: 15px;
-      padding: 15px;
-      border-bottom: 1px solid #e5e7eb;
-      align-items: center;
-    }
-
-    .attendance-item:last-child {
-      border-bottom: none;
-    }
-
-    .attendance-img {
-      width: 60px;
-      height: 60px;
-      border-radius: 10px;
-      object-fit: cover;
-      border: 2px solid #3f51b5;
-    }
-
-    .attendance-details {
-      flex: 1;
-    }
-
-    .attendance-name {
-      font-weight: 700;
-      color: #3f51b5;
-      margin-bottom: 4px;
-    }
-
-    .attendance-time {
-      font-size: 13px;
-      color: #6b7280;
-    }
-
-    .time-badge {
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .clock-in-badge {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .clock-out-badge {
-      background: #f8d7da;
-      color: #721c24;
-    }
 
     .modal {
       display: none;
@@ -415,6 +308,41 @@
     .close-modal:hover {
       color: #374151;
     }
+
+    .attendance-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+      margin-bottom: 25px
+    }
+
+    .attendance-log {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 20px
+    }
+
+    .attendance-item {
+      padding: 15px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .attendance-item:last-child {
+      border-bottom: none
+    }
+
+    .attendance-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-right: 15px
+    }
   </style>
 </head>
 
@@ -437,43 +365,6 @@
 
     <div id="alertBox"></div>
 
-    <!-- ATTENDANCE TRACKING MODAL -->
-    <div id="attendanceModal" class="modal">
-      <div class="modal-content">
-        <span class="close-modal" onclick="closeAttendanceModal()">&times;</span>
-        <h2 style="color:#3f51b5;margin-bottom:20px">📸 Mark Attendance</h2>
-
-        <div class="form-group">
-          <label>Select Employee</label>
-          <select id="attendanceEmpId" style="width:100%">
-            <option value="">-- Select Employee --</option>
-          </select>
-        </div>
-
-        <div class="camera-section">
-          <div class="video-container">
-            <video id="video" autoplay playsinline></video>
-          </div>
-
-          <canvas id="canvas"></canvas>
-
-          <div id="previewSection" style="display:none;text-align:center">
-            <img id="capturedImage" class="capture-preview">
-            <p style="margin-top:10px;color:#374151;font-weight:600">Image Captured!</p>
-          </div>
-
-          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
-            <button class="btn btn-info" onclick="startCamera()" id="startCameraBtn">Start Camera</button>
-            <button class="btn btn-primary" onclick="captureClockIn()" id="clockInBtn" style="display:none">📥 Clock
-              In</button>
-            <button class="btn btn-danger" onclick="captureClockOut()" id="clockOutBtn" style="display:none">📤 Clock
-              Out</button>
-            <button class="btn btn-secondary" onclick="stopCamera()">Stop Camera</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
 
     <!-- EMPLOYEE DETAILS MODAL -->
     <div id="detailsModal" class="modal">
@@ -487,16 +378,6 @@
         <div style="margin-top:20px;text-align:right;">
           <button class="btn btn-secondary" onclick="closeDetailsModal()">Close</button>
         </div>
-      </div>
-    </div>
-    <div class="card">
-      <h2>📊 Today's Attendance Log</h2>
-      <div id="attendanceLog" class="attendance-log">
-        <p style="color:#6b7280;text-align:center">No attendance records yet for today.</p>
-      </div>
-      <div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn btn-info" onclick="viewAllAttendance()">View All Attendance</button>
-        <button class="btn btn-secondary" onclick="exportAttendance()">Export to CSV</button>
       </div>
     </div>
 
@@ -549,6 +430,55 @@
       </form>
     </div>
 
+    <!-- ATTENDANCE TRACKING MODAL -->
+    <div id="attendanceModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeAttendanceModal()">&times;</span>
+        <h2 style="color:#3f51b5;margin-bottom:20px">📸 Mark Attendance</h2>
+
+        <div class="form-group">
+          <label>Select Employee</label>
+          <select id="attendanceEmpId" style="width:100%">
+            <option value="">-- Select Employee --</option>
+          </select>
+        </div>
+
+        <div class="camera-section">
+          <div class="video-container">
+            <video id="video" autoplay playsinline></video>
+          </div>
+
+          <canvas id="canvas"></canvas>
+
+          <div id="previewSection" style="display:none;text-align:center">
+            <img id="capturedImage" class="capture-preview">
+            <p style="margin-top:10px;color:#374151;font-weight:600">Image Captured!</p>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+            <button class="btn btn-info" onclick="startCamera()" id="startCameraBtn">Start Camera</button>
+            <button class="btn btn-primary" onclick="captureClockIn()" id="clockInBtn" style="display:none">📥 Clock
+              In</button>
+            <button class="btn btn-danger" onclick="captureClockOut()" id="clockOutBtn" style="display:none">📤 Clock
+              Out</button>
+            <button class="btn btn-secondary" onclick="stopCamera()">Stop Camera</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <h2>📊 Today's Attendance Log</h2>
+      <div id="attendanceLog" class="attendance-log">
+        <p style="color:#6b7280;text-align:center">No attendance records yet for today.</p>
+      </div>
+      <div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-info" onclick="viewAllAttendance()">View All Attendance</button>
+        <button class="btn btn-secondary" onclick="exportAttendance()">Export to CSV</button>
+      </div>
+    </div>
+
     <!-- EMPLOYEE TABLE -->
     <div class="card">
       <h2>👥 Employee Access Control</h2>
@@ -587,7 +517,6 @@
       employeeDb: "mevtencia_employeeDatabase",
       mailLog: "mevtencia_mailLog",
       session: "mevtencia_session",
-      attendance: "mevtencia_attendance"
     };
 
     function loadObj(key, fallback) {
@@ -598,7 +527,6 @@
 
     let employeeDatabase = loadObj(LS.employeeDb, {});
     let mailLog = loadObj(LS.mailLog, []);
-    let attendanceRecords = loadObj(LS.attendance, []);
 
     // Basic access guard
     (function guard() {
@@ -611,6 +539,8 @@
     function save() {
       localStorage.setItem(LS.employeeDb, JSON.stringify(employeeDatabase));
       localStorage.setItem(LS.mailLog, JSON.stringify(mailLog));
+      // Added from instruction
+      localStorage.setItem(LS.empData, JSON.stringify(employees));
       localStorage.setItem(LS.attendance, JSON.stringify(attendanceRecords));
     }
 
@@ -619,22 +549,26 @@
       setTimeout(() => alertBox.innerHTML = "", 3000)
     }
 
+    // -----------------------------
+    // LOAD DATA FROM BACKEND (Modified to include attendance)
+    // -----------------------------
     async function loadData() {
       try {
-        const resp = await fetch('/api/employees');
-        const employees = await resp.json();
+        const empResp = await fetch('/api/employees');
+        const fetchedEmployees = await empResp.json(); // Renamed to avoid conflict
         employeeDatabase = {};
-        employees.forEach(e => {
+        fetchedEmployees.forEach(e => {
           e.mailApproved = e.mailApproved === 1;
           employeeDatabase[e.id] = e;
         });
+        employees = fetchedEmployees; // Update the 'employees' array as well
+
+        updateTable(); // This updates the employee table based on employeeDatabase
 
         const attResp = await fetch('/api/attendance');
         attendanceRecords = await attResp.json();
-
-        updateTable();
-        updateAttendanceLog();
-        populateEmployeeDropdown();
+        updateAttendanceLog(); // Assuming this function exists to update attendance display
+        populateEmployeeDropdown(); // Assuming this function exists to populate dropdown
       } catch (err) {
         console.error("Failed to load data:", err);
       }
@@ -799,9 +733,6 @@
       XLSX.writeFile(wb, "MEVTENCIA_Employees.xlsx");
     }
 
-    // Initialize
-    loadData();
-
     // -----------------------------
     // ATTENDANCE TRACKING
     // -----------------------------
@@ -810,46 +741,36 @@
 
     function openAttendanceModal() {
       document.getElementById('attendanceModal').style.display = 'block';
-      populateEmployeeDropdown();
     }
 
     function closeAttendanceModal() {
-      document.getElementById('attendanceModal').style.display = 'none';
       stopCamera();
+      document.getElementById('attendanceModal').style.display = 'none';
     }
 
     function populateEmployeeDropdown() {
       const select = document.getElementById('attendanceEmpId');
-      const employees = Object.values(employeeDatabase);
-
+      const employeesArr = Object.values(employeeDatabase);
       select.innerHTML = '<option value="">-- Select Employee --</option>';
-      employees.forEach(emp => {
+      employeesArr.forEach(emp => {
         const option = document.createElement('option');
         option.value = emp.id;
-        option.textContent = `${emp.id} - ${emp.name}`;
+        option.textContent = `${emp.name} (${emp.id})`;
         select.appendChild(option);
       });
     }
 
     async function startCamera() {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user' },
-          audio: false
-        });
-
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
         const video = document.getElementById('video');
         video.srcObject = stream;
-
         document.getElementById('startCameraBtn').style.display = 'none';
         document.getElementById('clockInBtn').style.display = 'inline-block';
         document.getElementById('clockOutBtn').style.display = 'inline-block';
-        document.getElementById('previewSection').style.display = 'none';
-
-        showAlert("Camera started successfully", "success");
       } catch (err) {
-        showAlert("Camera access denied or not available", "error");
         console.error("Camera error:", err);
+        showAlert("Could not access camera", "error");
       }
     }
 
@@ -858,187 +779,142 @@
         stream.getTracks().forEach(track => track.stop());
         stream = null;
       }
-      const video = document.getElementById('video');
-      video.srcObject = null;
-
+      document.getElementById('video').srcObject = null;
       document.getElementById('startCameraBtn').style.display = 'inline-block';
       document.getElementById('clockInBtn').style.display = 'none';
       document.getElementById('clockOutBtn').style.display = 'none';
+      document.getElementById('previewSection').style.display = 'none';
     }
 
     function captureImage() {
-      const empId = document.getElementById('attendanceEmpId').value;
-      if (!empId) {
-        showAlert("Please select an employee first", "error");
-        return null;
-      }
-
       const video = document.getElementById('video');
       const canvas = document.getElementById('canvas');
       const context = canvas.getContext('2d');
-
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      const imageData = canvas.toDataURL('image/jpeg', 0.8);
-
-      // Show preview
-      document.getElementById('capturedImage').src = imageData;
+      currentImageData = canvas.toDataURL('image/jpeg');
+      document.getElementById('capturedImage').src = currentImageData;
       document.getElementById('previewSection').style.display = 'block';
-
-      return imageData;
     }
 
-    function captureClockIn() {
+    async function captureClockIn() {
       const empId = document.getElementById('attendanceEmpId').value;
-      if (!empId) {
-        showAlert("Please select an employee first", "error");
-        return;
-      }
-
+      if (!empId) { showAlert("Please select an employee", "error"); return; }
+      captureImage();
       const emp = employeeDatabase[empId];
-      if (!emp) {
-        showAlert("Employee not found", "error");
-        return;
-      }
-
-      const imageData = captureImage();
-      if (!imageData) return;
-
       const now = new Date();
-      const attendance = {
-        id: Date.now(),
+      const data = {
         employeeId: emp.id,
         employeeName: emp.name,
         type: 'clock-in',
         timestamp: now.toISOString(),
         displayTime: now.toLocaleString(),
-        image: imageData,
+        image: currentImageData,
         date: now.toLocaleDateString()
       };
-
-      attendanceRecords.push(attendance);
-      save();
-
-      showAlert(`Clock In recorded for ${emp.name} at ${now.toLocaleTimeString()}`, "success");
-      updateAttendanceLog();
-
-      // Auto close after 2 seconds
-      setTimeout(() => {
-        closeAttendanceModal();
-      }, 2000);
+      await saveAttendance(data);
     }
 
-    function captureClockOut() {
+    async function captureClockOut() {
       const empId = document.getElementById('attendanceEmpId').value;
-      if (!empId) {
-        showAlert("Please select an employee first", "error");
-        return;
-      }
-
+      if (!empId) { showAlert("Please select an employee", "error"); return; }
+      captureImage();
       const emp = employeeDatabase[empId];
-      if (!emp) {
-        showAlert("Employee not found", "error");
-        return;
-      }
-
-      const imageData = captureImage();
-      if (!imageData) return;
-
       const now = new Date();
-      const attendance = {
-        id: Date.now(),
+      const data = {
         employeeId: emp.id,
         employeeName: emp.name,
         type: 'clock-out',
         timestamp: now.toISOString(),
         displayTime: now.toLocaleString(),
-        image: imageData,
+        image: currentImageData,
         date: now.toLocaleDateString()
       };
+      await saveAttendance(data);
+    }
 
-      attendanceRecords.push(attendance);
-      save();
-
-      showAlert(`Clock Out recorded for ${emp.name} at ${now.toLocaleTimeString()}`, "success");
-      updateAttendanceLog();
-
-      // Auto close after 2 seconds
-      setTimeout(() => {
-        closeAttendanceModal();
-      }, 2000);
+    async function saveAttendance(data) {
+      try {
+        const resp = await fetch('/api/attendance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (resp.ok) {
+          showAlert("Attendance recorded successfully", "success");
+          closeAttendanceModal();
+          await loadData();
+        } else {
+          showAlert("Failed to save attendance", "error");
+        }
+      } catch (err) {
+        showAlert("Network error", "error");
+      }
     }
 
     function updateAttendanceLog() {
+      const log = document.getElementById('attendanceLog');
       const today = new Date().toLocaleDateString();
       const todayRecords = attendanceRecords.filter(r => r.date === today);
 
-      const logDiv = document.getElementById('attendanceLog');
-
       if (todayRecords.length === 0) {
-        logDiv.innerHTML = '<p style="color:#6b7280;text-align:center">No attendance records yet for today.</p>';
+        log.innerHTML = '<p style="color:#6b7280;text-align:center">No attendance records yet for today.</p>';
         return;
       }
 
-      logDiv.innerHTML = todayRecords.reverse().map(record => `
-    <div class="attendance-item">
-      <img src="${record.image}" class="attendance-img" alt="${record.employeeName}">
-      <div class="attendance-details">
-        <div class="attendance-name">${record.employeeName} (${record.employeeId})</div>
-        <div class="attendance-time">${record.displayTime}</div>
-      </div>
-      <span class="time-badge ${record.type === 'clock-in' ? 'clock-in-badge' : 'clock-out-badge'}">
-        ${record.type === 'clock-in' ? '📥 Clock In' : '📤 Clock Out'}
-      </span>
-    </div>
-  `).join('');
+      log.innerHTML = todayRecords.map(r => `
+        <div class="attendance-item">
+          <div style="display:flex;align-items:center">
+            <img src="${r.image}" class="attendance-img">
+            <div>
+              <div style="font-weight:700;color:#374151">${r.employeeName}</div>
+              <div style="font-size:12px;color:#6b7280">${r.type.toUpperCase()} at ${r.displayTime}</div>
+            </div>
+          </div>
+        </div>
+      `).join("");
     }
 
     function viewAllAttendance() {
-      if (attendanceRecords.length === 0) {
-        showAlert("No attendance records available", "info");
-        return;
-      }
-
-      const logDiv = document.getElementById('attendanceLog');
-      logDiv.innerHTML = attendanceRecords.slice().reverse().map(record => `
-    <div class="attendance-item">
-      <img src="${record.image}" class="attendance-img" alt="${record.employeeName}">
-      <div class="attendance-details">
-        <div class="attendance-name">${record.employeeName} (${record.employeeId})</div>
-        <div class="attendance-time">${record.displayTime}</div>
-      </div>
-      <span class="time-badge ${record.type === 'clock-in' ? 'clock-in-badge' : 'clock-out-badge'}">
-        ${record.type === 'clock-in' ? '📥 Clock In' : '📤 Clock Out'}
-      </span>
-    </div>
-  `).join('');
-
-      showAlert("Showing all attendance records", "info");
-    }
-
-    function exportAttendance() {
-      if (attendanceRecords.length === 0) {
-        showAlert("No attendance records to export", "error");
-        return;
-      }
-
-      let csv = 'Employee ID,Employee Name,Type,Date,Time\n';
-      attendanceRecords.forEach(record => {
-        csv += `${record.employeeId},${record.employeeName},${record.type},${record.date},${new Date(record.timestamp).toLocaleTimeString()}\n`;
+      let csv = "Employee,Type,Time,Date\n";
+      attendanceRecords.forEach(r => {
+        csv += `${r.employeeName},${r.type},${r.displayTime},${r.date}\n`;
       });
-
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `attendance_${new Date().toISOString().split('T')[0]}.csv`;
+      a.setAttribute('hidden', '');
+      a.setAttribute('href', url);
+      a.setAttribute('download', 'all_attendance_logs.csv');
+      document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
-
-      showAlert("Attendance exported successfully", "success");
+      document.body.removeChild(a);
     }
+
+    function exportAttendance() {
+      const today = new Date().toLocaleDateString();
+      const todayRecords = attendanceRecords.filter(r => r.date === today);
+      if (todayRecords.length === 0) { showAlert("No records for today", "error"); return; }
+
+      let csv = "Employee,Type,Time,Date\n";
+      todayRecords.forEach(r => {
+        csv += `${r.employeeName},${r.type},${r.displayTime},${r.date}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('hidden', '');
+      a.setAttribute('href', url);
+      a.setAttribute('download', 'today_attendance.csv');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // Initialize
+    loadData();
+
 
     // Register SW (safe)
     if ("serviceWorker" in navigator) {
@@ -1049,16 +925,7 @@
 
     // Initialize
     updateTable();
-    updateAttendanceLog();
-    populateEmployeeDropdown();
 
-    // Close modal when clicking outside
-    window.onclick = function (event) {
-      const modal = document.getElementById('attendanceModal');
-      if (event.target === modal) {
-        closeAttendanceModal();
-      }
-    }
   </script>
 
 </body>

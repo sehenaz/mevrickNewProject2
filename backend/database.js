@@ -13,6 +13,7 @@ db.serialize(() => {
         phoneNumber TEXT,
         altPhone TEXT,
         age INTEGER,
+        dob TEXT,
         password TEXT,
         department TEXT,
         workMode TEXT,
@@ -48,6 +49,7 @@ db.serialize(() => {
         FOREIGN KEY(employeeId) REFERENCES employees(id)
     )`);
 
+
     console.log('Database initialized.');
 
     // Migration for existing tables
@@ -55,6 +57,7 @@ db.serialize(() => {
         ['phoneNumber', 'TEXT'],
         ['altPhone', 'TEXT'],
         ['age', 'INTEGER'],
+        ['dob', 'TEXT'],
         ['upiId', 'TEXT'],
         ['employeeType', 'TEXT'],
         ['branchCode', 'TEXT']
