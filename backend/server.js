@@ -9,7 +9,13 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
+
+// Fallback to serving index.html for any other requests (to support PWA/SPA)
+app.use((req, res, next) => {
+    if (req.url.startsWith('/api')) return next();
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+});
 
 // --- API Endpoints ---
 
