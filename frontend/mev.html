@@ -403,36 +403,41 @@
           body: JSON.stringify(attendanceData)
         });
 
-        localStorage.setItem(LS.capturePhoto, capturedImageData);
-        if (capturedLocationDetails) {
-          localStorage.setItem(LS.captureLocationDetails, JSON.stringify(capturedLocationDetails));
+        // --- ATTENDANCE SYSTEM SYNC START ---
+        const session = JSON.parse(localStorage.getItem("mevtencia_session") || "{}");
+        const db = JSON.parse(localStorage.getItem("mevtencia_employeeDatabase") || "{}");
+        const records = JSON.parse(localStorage.getItem("mevtencia_attendanceRecords") || "{}");
+
+        const empId = session.id || "UNKNOWN";
+        const emp = db[empId] || { name: "Employee" };
+
+        if (!records[empId]) {
+          records[empId] = { employee: { name: emp.name, photo: null, location: null }, currentSession: null, records: [] };
         }
-        localStorage.setItem(LS.captureAt, new Date().toISOString());
 
-        // --- ATTENDANCE RULES START ---
-        const nowTime = new Date();
-        localStorage.setItem("attendanceActive", "true");
-        localStorage.setItem("clockInTime", nowTime.toISOString());
-        localStorage.setItem("attendanceDate", nowTime.toDateString());
-
-        const halfDayLimit = new Date();
-        halfDayLimit.setHours(11, 30, 0, 0); // 11:30 AM
-
-        let attendanceStatus = "On Time";
-        if (nowTime > halfDayLimit) {
-          attendanceStatus = "Half Day";
+        const today = nowTime.toLocaleDateString('en-GB');
+        // Check if already clocked in today
+        if (!records[empId].records.some(r => r.date === today)) {
+          const newRecord = {
+            date: today,
+            clockIn: nowTime.toLocaleTimeString('en-US', { hour12: false }),
+            clockInFull: nowTime.toISOString(),
+            location: capturedLocationDetails ? capturedLocationDetails.address : "Location captured"
+          };
+          records[empId].currentSession = newRecord;
+          records[empId].records.unshift(newRecord);
+          localStorage.setItem("mevtencia_attendanceRecords", JSON.stringify(records));
         }
-        localStorage.setItem("attendanceStatus", attendanceStatus);
-        // --- ATTENDANCE RULES END ---
+        // --- ATTENDANCE SYSTEM SYNC END ---
 
         showStatus("Synced and Continued. " + (attendanceStatus === "Half Day" ? "Marked as Half Day (Late Entry)." : ""), "success");
         setTimeout(() => {
-          window.location.href = "employeeProfile.html";
+          window.location.href = "Attendencetracker.html";
         }, 1000);
       } catch (err) {
         showStatus("Backend sync failed, but saving locally.", "error");
         localStorage.setItem(LS.capturePhoto, capturedImageData);
-        window.location.href = "employeeProfile.html";
+        window.location.href = "Attendencetracker.html";
       }
     }
 

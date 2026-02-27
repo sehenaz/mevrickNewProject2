@@ -615,6 +615,24 @@
             allAttendance[currentEmployee.id] = attendanceData;
             localStorage.setItem(LS.attendance, JSON.stringify(allAttendance));
         }
+
+        // --- NEW AUTO CLOCK-OUT SYSTEM ---
+        function checkAutoClockOut() {
+            const now = new Date();
+            const shiftEnd = new Date();
+            shiftEnd.setHours(18, 30, 0, 0); // 6:30 PM
+
+            if (now >= shiftEnd && localStorage.getItem("attendanceActive") === "true") {
+                console.log("Auto Clock-Out Triggered");
+                clockOut();
+            }
+        }
+
+        // Run check on load and every minute
+        window.addEventListener("load", () => {
+            checkAutoClockOut();
+            setInterval(checkAutoClockOut, 60000);
+        });
     </script>
 
 </body>
