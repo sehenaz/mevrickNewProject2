@@ -1,7 +1,8 @@
+version: 1
 services:
   - type: web
     name: mevtencia-app
-    env: node
+    runtime: node
     plan: free
     buildCommand: npm install
     startCommand: node server.js
