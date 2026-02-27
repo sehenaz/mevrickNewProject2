@@ -4,9 +4,7 @@ services:
     name: mevtencia-app
     env: node
     plan: free
+    region: oregon
     rootDirectory: backend
     buildCommand: npm install
     startCommand: node server.js
-    envVars:
-      - key: NODE_ENV
-        value: production
