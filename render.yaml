@@ -2,11 +2,10 @@ services:
   - type: web
     name: mevtencia-app
     env: node
+    plan: free
     buildCommand: npm install
     startCommand: node server.js
     envVars:
-      - key: PORT
-        value: 10000
       - key: NODE_ENV
         value: production
     rootDirectory: backend
