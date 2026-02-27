@@ -2,11 +2,11 @@ version: 1
 services:
   - type: web
     name: mevtencia-app
-    runtime: node
+    env: node
     plan: free
+    rootDirectory: backend
     buildCommand: npm install
     startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
-    rootDirectory: backend
