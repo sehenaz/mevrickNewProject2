@@ -392,107 +392,21 @@
 
   <script>
 
-
     ////////////////////////////////////////////////////////////
+    // CONSOLIDATED ATTENDANCE SYSTEM
 
-    let autoClockTimeout = null;
-
-    // 8 hours in milliseconds
-    const WORK_DURATION = 8 * 60 * 60 * 1000;
-
-    // Start clock-in after photo capture
-    function startAutoClock() {
-      const clockInTime = new Date();
-      localStorage.setItem("clockInTime", clockInTime);
-
-      console.log("Clock In Started:", clockInTime);
-
-      // Start 8 hour timer
-      autoClockTimeout = setTimeout(() => {
-        autoClockOut();
-      }, WORK_DURATION);
-    }
-
-    // // Auto clock-out function
-    // function autoClockOut() {
-    //     const clockOutTime = new Date();
-    //     localStorage.setItem("clockOutTime", clockOutTime);
-
-    //     alert("8 Hours Completed. Automatically Clocked Out!");
-
-    //     console.log("Clock Out Time:", clockOutTime);
-
-    //     localStorage.removeItem("clockInTime");
-    // }
-    //////////////////////////////////////////////////////////////////////////////////
-
-
-    ////////////////////////////////////////////////////////////
-    // AUTO ATTENDANCE SYSTEM (Photo Capture Based + 6:30 PM Auto Clock Out)
-
+    const WORK_DURATION = 8 * 60 * 60 * 1000; // 8 hours
     let autoClockOutTimer = null;
 
-    // 👉 Call this function AFTER image capture success
-    function startAutoAttendance() {
-
-      const now = new Date();
-
-      // Save clock-in time
-      localStorage.setItem("clockInTime", now.toISOString());
-      localStorage.setItem("attendanceActive", "true");
-
-      console.log("Auto Clock In:", now);
-
-      scheduleAutoClockOut();
-    }
-
-    // ⏰ Schedule 6:30 PM auto clock-out
-    function scheduleAutoClockOut() {
-
-      const now = new Date();
-
-      // Set today 6:30 PM
-      const clockOutTime = new Date();
-      clockOutTime.setHours(18, 30, 0, 0); // 6:30 PM
-
-      // If already past 6:30 PM → clock out immediately
-      if (now >= clockOutTime) {
-        autoClockOut();
-        return;
-      }
-
-      const remainingTime = clockOutTime - now;
-
-      autoClockOutTimer = setTimeout(() => {
-        autoClockOut();
-      }, remainingTime);
-
-      console.log("Auto clock-out scheduled at 6:30 PM");
-    }
-
-    // // 🔴 Auto Clock Out Function
-    // function autoClockOut() {
-
-    //     const now = new Date();
-
-    //     localStorage.setItem("clockOutTime", now.toISOString());
-    //     localStorage.removeItem("attendanceActive");
-
-    //     alert("6:30 PM reached. Automatically Clocked Out!");
-
-    //     console.log("Auto Clock Out:", now);
-    // }
-
-
-
+    // 🔴 Function to handle Auto Clock Out (called by timer or status check)
     function autoClockOut() {
-
       const now = new Date();
       const earlyExitLimit = new Date();
       earlyExitLimit.setHours(16, 30, 0, 0); // 4:30 PM
 
       let status = localStorage.getItem("attendanceStatus") || "On Time";
 
+      // Rule: If clocking out before 4:30 PM, it's a Half Day (unless it's an 8-hour completion from an early shift)
       if (now < earlyExitLimit) {
         status = "Half Day";
         alert("🌓 Left before 4:30 PM. Marked as Half Day.");
@@ -502,120 +416,56 @@
       localStorage.setItem("attendanceStatus", status);
       localStorage.removeItem("attendanceActive");
 
-      alert("✅ Attendance Completed");
+      alert("✅ Attendance Completed. Final Status: " + status);
+      console.log("Attendance Completed. Status:", status);
 
-      console.log("Final Status:", status);
+      if (autoClockOutTimer) {
+        clearTimeout(autoClockOutTimer);
+        autoClockOutTimer = null;
+      }
     }
 
-
-    // 🔄 Resume timer if page reloads
-    window.addEventListener("load", () => {
-
+    // ⏰ Schedule the auto clock-out timers
+    function scheduleAttendanceTimers() {
       const active = localStorage.getItem("attendanceActive");
+      if (active !== "true") return;
 
-      if (active === "true") {
-        scheduleAutoClockOut();
-      }
-    });
+      const clockInStr = localStorage.getItem("clockInTime");
+      if (!clockInStr) return;
 
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////
-    function startAutoAttendance() {
-
+      const clockInTime = new Date(clockInStr);
       const now = new Date();
 
-      const officeStart = new Date();
-      officeStart.setHours(10, 30, 0, 0);
+      // Rule: Auto Clock-out after 8 Hours
+      const eightHourExpiry = new Date(clockInTime.getTime() + WORK_DURATION);
+      const remainingTime = eightHourExpiry - now;
 
-      const halfDayLimit = new Date();
-      halfDayLimit.setHours(11, 30, 0, 0);
+      console.log("Auto clock-out scheduled in:", (remainingTime / 1000 / 60).toFixed(2), "minutes");
 
-      let status = "On Time";
-
-      if (now > halfDayLimit) {
-        status = "Half Day";
-        alert("🌓 Marked as Half Day (Late after 11:30 AM)");
+      if (remainingTime <= 0) {
+        autoClockOut();
+      } else {
+        if (autoClockOutTimer) clearTimeout(autoClockOutTimer);
+        autoClockOutTimer = setTimeout(autoClockOut, remainingTime);
       }
-      else if (now > officeStart) {
-        status = "Late Entry";
-        alert("⚠️ Marked as Late Entry");
-      }
-
-      localStorage.setItem("clockInTime", now.toISOString());
-      localStorage.setItem("attendanceStatus", status);
-      localStorage.setItem("attendanceActive", "true");
-      localStorage.setItem("attendanceDate", now.toDateString());
-
-      console.log("Clock In:", now);
-      console.log("Status:", status);
-
-      scheduleAutoClockOut();
     }
 
-    // function startAutoAttendance() {
-
-    //     const now = new Date();
-
-    //     const officeStart = new Date();
-    //     officeStart.setHours(9, 30, 0, 0);
-
-    //     const halfDayLimit = new Date();
-    //     halfDayLimit.setHours(11, 30, 0, 0);
-
-    //     let status = "On Time";
-
-    //     if (now > halfDayLimit) {
-    //         status = "Half Day";
-    //         alert("🌓 Marked as Half Day (Late after 11:30 AM)");
-    //     }
-    //     else if (now > officeStart) {
-    //         status = "Late Entry";
-    //         alert("⚠️ Marked as Late Entry");
-    //     }
-
-    //     localStorage.setItem("clockInTime", now.toISOString());
-    //     localStorage.setItem("attendanceStatus", status);
-    //     localStorage.setItem("attendanceActive", "true");
-    //     localStorage.setItem("attendanceDate", now.toDateString());
-
-    //     console.log("Clock In:", now);
-    //     console.log("Status:", status);
-
-    //     scheduleAutoClockOut();
-    // }
-
-
-    //     // // Save attendance data
-    //     // localStorage.setItem("clockInTime", now.toISOString());
-    //     // localStorage.setItem("attendanceStatus", status);
-    //     // localStorage.setItem("attendanceActive", "true");
-
-    //     // console.log("Clock In:", now);
-    //     // console.log("Status:", status);
-
-    //     // scheduleAutoClockOut();
-
-
-
-
-    //////////////////////////////////////////////////////////////////////////
-    // If page reloads, resume timer
+    // 🔄 Initialization and PWA Handling
     window.addEventListener("load", () => {
-      const savedTime = localStorage.getItem("clockInTime");
+      const savedDate = localStorage.getItem("attendanceDate");
+      const today = new Date().toDateString();
 
-      if (savedTime) {
-        const clockIn = new Date(savedTime);
-        const now = new Date();
-        const workedTime = now - clockIn;
-
-        if (workedTime >= WORK_DURATION) {
-          autoClockOut();
-        } else {
-          const remainingTime = WORK_DURATION - workedTime;
-          autoClockTimeout = setTimeout(autoClockOut, remainingTime);
-        }
+      // Reset attendance for a new day
+      if (savedDate && savedDate !== today) {
+        localStorage.removeItem("attendanceStatus");
+        localStorage.removeItem("clockInTime");
+        localStorage.removeItem("clockOutTime");
+        localStorage.removeItem("attendanceActive");
+        localStorage.setItem("attendanceDate", today);
       }
+
+      // Resume timers if active
+      scheduleAttendanceTimers();
     });
 
 

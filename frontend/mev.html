@@ -409,7 +409,23 @@
         }
         localStorage.setItem(LS.captureAt, new Date().toISOString());
 
-        showStatus("Synced and Continued.", "success");
+        // --- ATTENDANCE RULES START ---
+        const nowTime = new Date();
+        localStorage.setItem("attendanceActive", "true");
+        localStorage.setItem("clockInTime", nowTime.toISOString());
+        localStorage.setItem("attendanceDate", nowTime.toDateString());
+
+        const halfDayLimit = new Date();
+        halfDayLimit.setHours(11, 30, 0, 0); // 11:30 AM
+
+        let attendanceStatus = "On Time";
+        if (nowTime > halfDayLimit) {
+          attendanceStatus = "Half Day";
+        }
+        localStorage.setItem("attendanceStatus", attendanceStatus);
+        // --- ATTENDANCE RULES END ---
+
+        showStatus("Synced and Continued. " + (attendanceStatus === "Half Day" ? "Marked as Half Day (Late Entry)." : ""), "success");
         setTimeout(() => {
           window.location.href = "employeeProfile.html";
         }, 1000);
